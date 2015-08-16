@@ -8,7 +8,7 @@
 ;; renamed into #####.jpg in order.
 
 
-(import [os [makedirs]])
+(import [os [getcwd chdir listdir makedirs]])
 (import [glob [glob]])
 (import [shutil [copy rmtree]])
 (require hy.contrib.loop)
@@ -17,8 +17,8 @@
   (def origin-dir "0-jpg")
   (def destination-dir "1-jpg-seq")
 
-  (.chdir os workdir)
-  (def listing (.listdir os))
+  (chdir workdir)
+  (def listing (listdir))
 
   (assert (some (fn [n] (= n origin-dir)) listing)
           "Origin dir ./0-jpg/ missing. Maybe running from wrong folder?")
@@ -46,4 +46,4 @@
                 (print "Done copying."))))
 
 (defmain [&rest args]
-  (copy-and-rename (or (first args) (.getcwd os))))
+  (copy-and-rename (or (second args) (getcwd))))
