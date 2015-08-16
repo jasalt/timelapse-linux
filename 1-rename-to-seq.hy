@@ -13,27 +13,37 @@
 (import [shutil [copy rmtree]])
 (require hy.contrib.loop)
 
-(def origin-dir "./0-jpg/" destination-dir "1-jpg-seq")
+(defn copy-and-rename [workdir]
+  (def origin-dir "0-jpg")
+  (def destination-dir "1-jpg-seq")
 
-;; (.chdir os "/Users/js/Desktop/chillapse/ep1-july")
+  (.chdir os workdir)
+  (def listing (.listdir os))
 
-(when (some (fn [n] (= n destination-dir)) (.listdir os))
-  (print "Destination dir already existing. Empty it and continue? [y/N]")
-  (let [[opt (input "Enter option: ")]]
-    (cond
-     [(= opt "y") (do (print "Removing existing folder")
-                      (rmtree destination-dir))]
-     [(= opt "n") (print "Not overwriting, exiting")]
-     [True (print "Invalid input, exiting")])))
+  (assert (some (fn [n] (= n origin-dir)) listing)
+          "Origin dir ./0-jpg/ missing. Maybe running from wrong folder?")
+  (print "Found ./0-jpg/ source folder")
 
-(def jpgs (glob (+ origin-dir "*.jpg")))
-(print "Copying & renaming" (len jpgs) "jpg files.")
-(makedirs destination-dir)
+  (when (some (fn [n] (= n destination-dir)) listing)
+    (print "Destination dir already existing. Empty it and continue? [y/N]")
+    (let [[opt (input "Enter option: ")]]
+      (cond
+       [(= opt "y") (do (print "Removing existing folder")
+                        (rmtree destination-dir))]
+       [(= opt "n") (print "Not overwriting, exiting")]
+       [True (print "Invalid input, exiting")])))
 
-(loop [[files jpgs] [acc 1]]
-      (if-not (empty? files)
-              (let [[orig-file (first files)]
-                    [dest-filename (+ "frame" (format acc "05d") ".jpg")]]
-                (copy orig-file (+ destination-dir "/" dest-filename))
-                (recur (list (rest files)) (inc acc))) ;; TODO Why do I need to run list fn?
-              (print "Done copying.")))
+  (def jpgs (glob (+ "./" origin-dir "/*.jpg")))
+  (print "Copying & renaming" (len jpgs) "jpg files.")
+  (makedirs destination-dir)
+
+  (loop [[files jpgs] [acc 1]]
+        (if-not (empty? files)
+                (let [[orig-file (first files)]
+                      [dest-filename (+ "frame" (format acc "05d") ".jpg")]]
+                  (copy orig-file (+ destination-dir "/" dest-filename))
+                  (recur (list (rest files)) (inc acc))) ;; TODO Why do I need to run list fn?
+                (print "Done copying."))))
+
+(defmain [&rest args]
+  (copy-and-rename (or (first args) (.getcwd os))))
