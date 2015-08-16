@@ -7,16 +7,15 @@
 ;; into folder 1-jpg-seq
 ;; renamed into #####.jpg in order.
 
-(import [sh [ls cwd]])
-(import os)
+
+(import [os [makedirs]])
 (import [glob [glob]])
 (import [shutil [copy rmtree]])
+(require hy.contrib.loop)
 
-(setv origin-dir "./0-jpg/")
-(setv destination-dir "1-jpg-seq")
+(def origin-dir "./0-jpg/" destination-dir "1-jpg-seq")
 
 ;; (.chdir os "/Users/js/Desktop/chillapse/ep1-july")
-;; (ls destination-dir)
 
 (when (some (fn [n] (= n destination-dir)) (.listdir os))
   (print "Destination dir already existing. Empty it and continue? [y/N]")
@@ -27,13 +26,14 @@
      [(= opt "n") (print "Not overwriting, exiting")]
      [True (print "Invalid input, exiting")])))
 
-(setv jpgs (glob (+ origin-dir "*.jpg")))
+(def jpgs (glob (+ origin-dir "*.jpg")))
 (print "Copying & renaming" (len jpgs) "jpg files.")
+(makedirs destination-dir)
 
-;; (map
-;;  (fn [orig-name]
-;;    ()
-;;    )
-;;  jpgs)
-
-;;(list (drop-while (fn [character] (= character ".")) "asddf.ooo"))
+(loop [[files jpgs] [acc 1]]
+      (if-not (empty? files)
+              (let [[orig-file (first files)]
+                    [dest-filename (+ "frame" (format acc "05d") ".jpg")]]
+                (copy orig-file (+ destination-dir "/" dest-filename))
+                (recur (list (rest files)) (inc acc))) ;; TODO Why do I need to run list fn?
+              (print "Done copying.")))
