@@ -36,8 +36,9 @@
   (chdir origin-dir)
 
   (print "Running perl deflickering script on files at" (getcwd))
-  (apply call ["timelapse-deflicker"] {"shell" False "bufsize" 0})
-  
+  (let [[args ["timelapse-deflicker" "-w" "60" "-p" "2"]]]
+    (apply call [args] {"bufsize" 0 "shell" False}))
+
   (print "Moving deflickered frames to" (+ "./" destination-dir "/"))
   (move "./Deflickered" (+ "../" destination-dir)))
 
