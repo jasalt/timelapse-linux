@@ -14,12 +14,19 @@
   (apply ImageSequenceClip [(list (take 200 frames))] {"fps" 30}))
 
 (defn compare-videos [&videos]
-  ;;(apply (. clip write-videofile) ["movie.mp4"] {"threads" 8})  
+  ;;(apply (. clip write-videofile) ["movie.mp4"] {"threads" 8})
+  
   )
 
 (comment
  (def test-a (get-clip "1-jpg-seq"))
  (def test-b (get-clip "2-deflickered"))
+
+ (let [[merged-clip (clips-array [[test-a test-b]])]]
+   (apply (. merged-clip write-videofile) ["movie.mp4"] {"threads" 8 "fps" 10}))
+
+ (. test-a duration)
+ (.set-duration test-a 1)
  )
 
 (defmain [&rest args]
