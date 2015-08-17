@@ -5,6 +5,7 @@
 (import [os [getcwd chdir listdir makedirs]])
 (import [glob [glob]])
 (import [moviepy.editor [*]])
+(import [moviepy.video.fx.all [crop]])
 
 
 (defn get-clip [folder]
@@ -21,9 +22,12 @@
 (comment
  (def test-a (get-clip "1-jpg-seq"))
  (def test-b (get-clip "2-deflickered"))
-
- (let [[merged-clip (clips-array [[test-a test-b]])]]
-   (apply (. merged-clip write-videofile) ["movie.mp4"] {"threads" 8 "fps" 10}))
+ 
+ (let [[half-width (/ (first (. test-a size)) 2)]
+       [crop-a (apply crop [test-a] {"x1" 0 "width" half-width})]
+       [crop-b (apply crop [test-b] {"x1" half-width "width" half-width})]
+       [merged-clip (clips-array [[crop-a crop-b]])]]
+   (apply (. merged-clip write-videofile) ["comparison.mp4"] {"threads" 8 "fps" 10}))
 
  (. test-a duration)
  (.set-duration test-a 1)
