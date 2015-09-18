@@ -1,0 +1,15 @@
+* Raspberry Pi webcam capture scripts
+** Capture script
+Schedule [[file:snap-archive.sh][snap-archive.sh]] with cron. It takes a pic and archives it in ~/webcam/photos/<YYYY-MM-DD>/<YYYY-MM-DD-HH-MM-SS>.jpg
+** USB problems
+There's some problems with Pi1 USB. https://www.raspberrypi.org/forums/viewtopic.php?f=28&t=86265
+
+Can possibly fixed by running usbreset (by [[https://gist.github.com/x2q/5124616][x2q]]).
+
+Compile with =$ cc usbreset.c -o usbreset= and make executable by =$ chmod +x usbreset=.
+
+Find device bus number with =$ lsusb=
+
+Example output: =Bus *001* Device *005*: ID 04f2:b217 Chicony Electronics Co., Ltd Lenovo Integrated Camera (0.3MP)=
+
+Reset the device: =$ sudo ~/usbreset /dev/bus/usb/001/005=
