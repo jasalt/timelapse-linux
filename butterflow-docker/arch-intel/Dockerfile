@@ -11,6 +11,7 @@ RUN sudo pacman -Syu --noconfirm
 
 RUN yaourt -S --noconfirm intel-opencl-runtime
 RUN yaourt -S --noconfirm butterflow
+RUN yaourt -S --noconfirm clinfo
 
 # Fix problem with OpenCV lib
 RUN sudo ln -s /dev/null /dev/raw1394
