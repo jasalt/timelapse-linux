@@ -14,7 +14,7 @@ mkdir -p $WD
 # fswebcam -S 200 -r 640x480 --subtitle "Image glitches a bit. waiting for new camera..."  --jpeg 60 --save $WD/img.jpg
 
 ## Lifecam HD 3000
-fswebcam -S 100 -r 1280x720 --jpeg 90 --no-banner --save $WD/img.jpg
+# fswebcam -S 100 -r 1280x720 --jpeg 90 --no-banner --save $WD/img.jpg
 
 ## C920e
 # Static focus far away
@@ -22,6 +22,9 @@ fswebcam -S 100 -r 1280x720 --jpeg 90 --no-banner --save $WD/img.jpg
 #v4l2-ctl -d 0 -c focus_absolute=0
 #fswebcam -S 150 --frames 4 -r 1920x1080 --jpeg 90 --no-banner --save $WD/img.jpg
 #fswebcam -S 150 --frames 4 -r 1280x720 --jpeg 90 --no-banner --save $WD/img.jpg
+
+
+fswebcam --rotate 180 -S 150 --frames 4 -r 1280x720 --jpeg 90 --no-banner --save $WD/img.jpg
 
 
 # Put taken photo into timestamped folder with timestamp filename
