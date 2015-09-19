@@ -1,4 +1,4 @@
-#!/bin/bash -eu
+#!/bin/bash -eux
 # Cron script for taking pics named by date
 
 # Notes
@@ -24,7 +24,7 @@ mkdir -p $WD
 #fswebcam -S 150 --frames 4 -r 1280x720 --jpeg 90 --no-banner --save $WD/img.jpg
 
 
-fswebcam --rotate 180 -S 150 --frames 4 -r 1280x720 --jpeg 90 --no-banner --save $WD/img.jpg
+fswebcam --rotate 180 -S 150 --frames 4 -r 1280x720 --jpeg 94 --no-banner --save $WD/img.jpg
 
 
 # Put taken photo into timestamped folder with timestamp filename
