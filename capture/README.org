@@ -1,6 +1,22 @@
 * Raspberry Pi webcam capture scripts
 ** Capture script
 Schedule [[file:snap-archive.sh][snap-archive.sh]] with cron. It takes a pic and archives it in ~/webcam/photos/<YYYY-MM-DD>/<YYYY-MM-DD-HH-MM-SS>.jpg
+
+Examples:
+
+#+BEGIN_SRC
+
+# every 10 minutes
+*/10 * * * * <absolute_path_to_script>
+#+END_SRC
+
+#+BEGIN_SRC
+
+# twice per minute
+* * * * * <absolute_path_to_script>
+* * * * * sleep 30; <absolute_path_to_script>
+
+#+END_SRC
 ** USB problems
 There's some problems with Pi1 USB. https://www.raspberrypi.org/forums/viewtopic.php?f=28&t=86265
 
