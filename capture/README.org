@@ -13,19 +13,36 @@ Examples:
 #+BEGIN_SRC
 
 # twice per minute
+#+begin_lang
 * * * * * <absolute_path_to_script>
 * * * * * sleep 30; <absolute_path_to_script>
+#+end_lang
 
-#+END_SRC
-** USB problems
-There's some problems with Pi1 USB. https://www.raspberrypi.org/forums/viewtopic.php?f=28&t=86265
+** USB problem workaround
+There's some problems with Pi1 USB, where fswebcam gives error =Unable to find a compatible palette format.= and following runs appear as =uvcvideo: Failed to set UVC probe control : -110 (exp. 26).= kernel errors in syslog. More details & discussion at https://www.raspberrypi.org/forums/viewtopic.php?f=28&t=86265.
 
-Can possibly fixed by running usbreset (by [[https://gist.github.com/x2q/5124616][x2q]]).
+*** Run usbreset via swatch on error
+=This section is being tested currently, probably requires some more debugging.=
 
-Compile with =$ cc usbreset.c -o usbreset= and make executable by =$ chmod +x usbreset=.
+Device works after re-plugging, which could be accomplished in software level by running usbreset (by [[https://gist.github.com/x2q/5124616][x2q]]). To monitor for syslog error and run usbreset, =swatch= command line utility can be used.
 
-Find device bus number with =$ lsusb=
+Setup uvc device bus number into swatch-usbfail.conf 
+1) Compile usbreset and make it executable
+   #+begin_sh
+   cc usbreset.c -o usbreset
+   chmod +x usbreset
+   #+end_sh
 
-Example output: =Bus *001* Device *005*: ID 04f2:b217 Chicony Electronics Co., Ltd Lenovo Integrated Camera (0.3MP)=
+2) Find device bus number with =lsusb=.
+   Example output: =Bus *001* Device *005*: ID 04f2:b217 Chicony Electronics Co., Ltd Lenovo Integrated Camera (0.3MP)=
 
-Reset the device: =$ sudo ~/usbreset /dev/bus/usb/001/005=
+3) Try reset the device: =$ sudo ~/usbreset /dev/bus/usb/001/005=
+
+4) Setup swatch, add proper bus identifier to =swatch-usbfail.conf=
+   #+begin_sh
+   sudo apt-get install swatch
+   swatch --config-file=/home/pi/timelapse-utils/capture/swatch-usbfail.conf --tail-file=/var/log/syslog
+   #+end_sh
+
+5) TODO Automate swatch process via daemon etc. 
+
