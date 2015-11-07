@@ -8,6 +8,9 @@
 # Notes
 # In CRON, only HOME, LOGNAME and SHELL env variables are set.
 
+`dirname $0`/its_not_dark.py
+if [ $? -eq 1 ]; then echo "Not taking picture when it's dark." && exit 1; fi
+
 # Use ~/webcam as workdir. Create folder if it's not there.
 WD=$HOME/webcam
 mkdir -p $WD
@@ -30,7 +33,7 @@ case $CAM_MODEL in
         ;;
     hd3000)
         fswebcam -S 150 --frames 4 -r 1280x720 --jpeg 90 --no-banner --rotate $ROTATION --save $WD/img.jpg
-        ;;
+        ;
     simple)
         fswebcam -S 200 -r 640x480 --no-banner --jpeg 60 --no-banner --save $ROTATION $WD/img.jpg
         ;;
