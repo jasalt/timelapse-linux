@@ -1,0 +1,26 @@
+- hosts: raspberry
+  user: pi
+  gather_facts: True
+  tasks:
+  - name: Install fswebcam and curl
+    sudo: yes
+    apt: pkg={{ item }} state=installed
+    with_items:
+      - fswebcam
+      - curl
+  - name: Copy snap-archive.sh script into place
+    copy: src=scripts/capture/snap-archive.sh dest=/home/pi/webcam/snap-archive.sh mode=u+rwx
+  - name: Set CRON to snap a photo every minute
+    cron: name="Take picture" minute="*" job="/home/pi/webcam/snap-archive.sh > /dev/null"
+  # - name: Set CRON to alert if space is running out
+  #   cron: name="Monitor disk usage" minute="*/5" job="curl -X POST -H 'Authorization: Bearer '{{ lookup('env', 'PB_KEY') }} "https://api.pushbullet.com/v2/pushes" --header 'Content-Type: application/json' --data-binary '{"type": "note", "title": "'`hostname`'", "body": "'Space is running out!'"}'"
+
+# - hosts: laptop
+#   user: jarkko
+#   sudo: True
+#   gather_facts: True
+#   vars_files:
+#     #- vars/defaults.yml
+#     - vars/user.yml
+#   roles:
+#     - timelapse-processor
