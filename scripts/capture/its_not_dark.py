@@ -12,15 +12,16 @@ o.long = '26'
 s = ephem.Sun()
 s.compute()
 
-dt_setting = ephem.localtime(o.previous_setting(s))
-dt_dark = dt_setting + timedelta(hours=1)
+last_setting = ephem.localtime(o.previous_setting(s))
+last_dark = last_setting + timedelta(hours=1)
 
-dt_rising = ephem.localtime(o.next_rising(s))
-dt_light = ephem.localtime(o.next_rising(s)) - timedelta(hours=1)
+last_rising = ephem.localtime(o.previous_rising(s))
+last_light = last_rising - timedelta(hours=1)
 
 dt_now = datetime.now()
+today = dt_now.date()
 
-if dt_dark < dt_now < dt_light:
+if (last_dark.date() == today) or (last_light.date() != today):
     print("It's dark!")
     exit(1)
 else:
