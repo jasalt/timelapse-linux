@@ -17,19 +17,24 @@
     sudo: yes
     pip: name=ephem
   - name: Set CRON to snap a photo every minute
-    cron: name="Take picture" minute="*" job="/home/pi/webcam/snap-archive.sh > /dev/null"
-    backup: yes
+    cron: name="Take picture" minute="*" job="/home/pi/webcam/snap-archive.sh > /dev/null" backup=yes
   # - name: Set CRON to alert if space is running out
   #   cron: name="Monitor disk usage" minute="*/5" job="curl -X POST -H 'Authorization: Bearer '{{ lookup('env', 'PB_KEY') }} "https://api.pushbullet.com/v2/pushes" --header 'Content-Type: application/json' --data-binary '{"type": "note", "title": "'`hostname`'", "body": "'Space is running out!'"}'"
 
 
 
-# - hosts: laptop
-#   user: jarkko
-#   sudo: True
-#   gather_facts: True
-#   vars_files:
-#     #- vars/defaults.yml
-#     - vars/user.yml
-#   roles:
-#     - timelapse-processor
+- hosts: kitchen
+  user: jarkko
+  gather_facts: True
+  # vars_files:
+  #   #- vars/defaults.yml
+  #   #- vars/user.yml
+  tasks:
+  - name: Add ~/bin directory and add to path
+    file: path=/home/jarkko/bin/ state=directory mode=0755
+    environment:
+      PATH: /home/jarkko/bin:{{ ansible_env.PATH }}
+  - name: Copy ngrok binary to ~/bin
+    copy: src=scripts/bin/ngrok dest=/home/jarkko/bin/ngrok mode=u+rwx
+
+  # - name: Set ngrok to start on
