@@ -36,5 +36,9 @@
       PATH: /home/jarkko/bin:{{ ansible_env.PATH }}
   - name: Copy ngrok binary to ~/bin
     copy: src=scripts/bin/ngrok dest=/home/jarkko/bin/ngrok mode=u+rwx
+  - name: Create workdir for webcam image processing
+    file: path={{ ansible_env.HOME }}/timelapse/days state=directory mode=0755
+  - name: Set CRON to fetch daily images from raspberry
+    cron: name="Fetch raspberry images" hour="3" job="rsync --remove-source-files -av pi@192.168.1.20:~/webcam/photos/* {{ ansible_env.HOME }}/timelapse/days/" backup=yes
 
   # - name: Set ngrok to start on
