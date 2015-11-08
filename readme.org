@@ -1,0 +1,52 @@
+* Automated timelapse setup
+- Raspberry Pi with webcam
+- Linux box in the same network for processing and uploading to Youtube
+
+** Installation notes
+(work in progress)
+*** First setup SSH keypair for passwordless login
+
+1) Laptop > pi and kitchen
+2) kitchen > pi
+
+*** Run Ansible playbook
+- Setup everything =ansible-playbook -i ./hosts site.yml=
+- Limit to specific machine =ansible-playbook -i ./hosts -l kitchen site.yml=
+
+** Pipeline overview
+*** Capture on Raspberry pi
+**** CRON every 1 minute
+***** is_darktime.sh
+***** capture.sh
+**** TODO CRON every day
+***** Alert if running out of space
+pbnotify
+**** TODO Camera crash problem ?
+Fix by reboots?
+Adding longer interval?
+*** Temporary storage & upload on Risasus
+**** CRON every morning
+***** Pull images from RPi
+Rsync with remove source files.
+***** TODO Get weatherstation data
+**** For all unprocessed days
+***** Move images to subdir 1-original
+***** Filter images with Imagemagick
+Remove red circle
+http://www.imagemagick.org/discourse-server/viewtopic.php?t=19116
+-> 2-cleaned
+***** Compile timelapses with FFMPEG
+from day 2-cleaned -> timestamp.avi
+***** Upload to Youtube
+https://github.com/tokland/youtube-upload
+Or Dropbox? https://github.com/andreafabrizi/Dropbox-Uploader
+***** Alert when running out of space
+pbnotify
+*** TODO Status monitor script?
+**** TODO Visualize pipeline parts
+Help understanding the flow.
+**** TODO Workdir contents
+Different machines
+**** TODO Device storage percentages
+**** TODO Logfiles
+Point script outputs to logfiles.
