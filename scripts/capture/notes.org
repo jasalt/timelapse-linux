@@ -1,27 +1,7 @@
-* Raspberry Pi webcam capture scripts
-** Capture script
-Schedule [[file:snap-archive.sh][snap-archive.sh]] with cron. It takes a pic and archives it in ~/webcam/photos/<YYYY-MM-DD>/<YYYY-MM-DD-HH-MM-SS>.jpg
-
-Examples:
-
-#+BEGIN_SRC
-
-# every 10 minutes
-*/10 * * * * <absolute_path_to_script>
-#+END_SRC
-
-#+BEGIN_SRC
-
-# twice per minute
-#+begin_lang
-* * * * * <absolute_path_to_script>
-* * * * * sleep 30; <absolute_path_to_script>
-#+end_lang
-
-** USB problem workaround
+* USB problem workarounds
 There's some problems with Pi1 USB, where fswebcam gives error =Unable to find a compatible palette format.= and following runs appear as =uvcvideo: Failed to set UVC probe control : -110 (exp. 26).= kernel errors in syslog. More details & discussion at https://www.raspberrypi.org/forums/viewtopic.php?f=28&t=86265.
 
-*** Run usbreset via swatch on error
+** Run usbreset via swatch on error
 =This section is being tested currently, probably requires some more debugging.=
 
 Device works after re-plugging, which could be accomplished in software level by running usbreset (by [[https://gist.github.com/x2q/5124616][x2q]]). To monitor for syslog error and run usbreset, =swatch= command line utility can be used.
