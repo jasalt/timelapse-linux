@@ -36,7 +36,7 @@ case $CAM_MODEL in
         ;;
     hd3000)
         fswebcam -S 150 --frames 4 -r 1280x720 --jpeg 90 --no-banner --rotate $ROTATION --save $TEMP_IMG
-        ;
+        ;;
     simple)
         fswebcam -S 200 -r 640x480 --no-banner --jpeg 60 --no-banner --save $ROTATION $TEMP_IMG
         ;;
@@ -46,7 +46,7 @@ case $CAM_MODEL in
         ;;
 esac
 
-if ! [ -e "$TEMP_IMG" ]
+if ! [ -e "$TEMP_IMG" ]; then
    echo "Image not taken possibly because of camera problems."
    exit 1
 fi
