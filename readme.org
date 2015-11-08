@@ -12,6 +12,7 @@
 *** Run Ansible playbook
 - Setup everything =ansible-playbook -i ./hosts site.yml=
 - Limit to specific machine =ansible-playbook -i ./hosts -l kitchen site.yml=
+- Limit to tasks with tag "custom" =ansible-playbook -i ./hosts -l raspberry --tags custom site.yml=
 
 ** Pipeline overview
 *** Capture on Raspberry pi
@@ -40,6 +41,7 @@ from day 2-cleaned -> timestamp.avi
 ***** Upload to Youtube
 https://github.com/tokland/youtube-upload
 Or Dropbox? https://github.com/andreafabrizi/Dropbox-Uploader
+***** Notify link for uploaded video
 ***** Alert when running out of space
 pbnotify
 *** TODO Status monitor script?
