@@ -4,7 +4,7 @@
 # Script that tells if there's light outside (in Jyväskylä / Finland) at this
 # moment. Depends on ephem library, written for use with Python 2.7.
 import ephem
-from datetime import timedelta, datetime
+from datetime import timedelta
 
 o = ephem.Observer()
 o.lat = '62'  # <-- Customize latitude & longtitude to your liking
@@ -18,10 +18,7 @@ last_dark = last_setting + timedelta(hours=1)
 last_rising = ephem.localtime(o.previous_rising(s))
 last_light = last_rising - timedelta(hours=1)
 
-dt_now = datetime.now()
-today = dt_now.date()
-
-if (last_dark.date() == today) or (last_light.date() != today):
+if last_light < last_dark:
     print("It's dark!")
     exit(1)
 else:

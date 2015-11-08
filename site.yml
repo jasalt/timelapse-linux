@@ -15,16 +15,18 @@
     pip: name=ephem
   - name: Copy its_not_dark.py script into place
     copy: src=scripts/capture/its_not_dark.py dest=/home/pi/webcam/its_not_dark.py mode=a+rwx
+    tags:
+      - script
   - name: Copy capture script into place
     copy: force=yes src=scripts/capture/snap-archive.sh dest=/home/pi/webcam/snap-archive.sh mode=a+rwx
     tags:
-      - custom
+      - script
   - name: Set CRON to snap a photo every minute
     cron: name="Take picture" minute="*" job="export CAM_MODEL=hd3000;/home/pi/webcam/snap-archive.sh > /dev/null" backup=yes
+  - name: Set CRON to remove empty photo dirs daily
+    cron: name="Take picture" minute="1" hour="1" job="find /home/pi/webcam/photos/ -depth -type d -empty -delete" backup=yes
   # - name: Set CRON to alert if space is running out
   #   cron: name="Monitor disk usage" minute="*/5" job="curl -X POST -H 'Authorization: Bearer '{{ lookup('env', 'PB_KEY') }} "https://api.pushbullet.com/v2/pushes" --header 'Content-Type: application/json' --data-binary '{"type": "note", "title": "'`hostname`'", "body": "'Space is running out!'"}'"
-
-
 
 - hosts: kitchen
   user: jarkko

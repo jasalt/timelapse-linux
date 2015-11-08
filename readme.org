@@ -12,8 +12,9 @@
 *** Run Ansible playbook
 - Setup everything =ansible-playbook -i ./hosts site.yml=
 - Limit to specific machine =ansible-playbook -i ./hosts -l kitchen site.yml=
-- Limit to tasks with tag "custom" =ansible-playbook -i ./hosts -l raspberry --tags custom site.yml=
+- Limit to tasks with tag "custom" =ansible-playbook -i ./hosts -l raspberry --tags script site.yml=
 
+Custom script jobs are mostly under tag "script".
 ** Pipeline overview
 *** Capture on Raspberry pi
 **** CRON every 1 minute
