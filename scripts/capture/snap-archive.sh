@@ -11,9 +11,6 @@
 `dirname $0`/its_not_dark.py
 if [ $? -eq 1 ]; then echo "Not taking picture when it's dark." && exit 1; fi
 
-# Use ~/webcam as workdir. Create folder if it's not there.
-WD=$HOME/webcam
-mkdir -p $WD
 
 
 # Reset camera focus to infinite
@@ -26,16 +23,22 @@ fi
 # Set rotation by env var, default to 0.
 ROTATION=${CAM_ROTATION:-0}
 
+# Use ~/webcam as workdir. Create folder if it's not there.
+WD=$HOME/webcam
+mkdir -p $WD
+
+TEMP_IMG=$WD/img.jpg
+
 # Take photo with webcamera
 case $CAM_MODEL in
     c920e)
-        fswebcam -S 150 --frames 4 -r 1920x1080 --jpeg 90 --no-banner  --rotate $ROTATION --save $WD/img.jpg
+        fswebcam -S 150 --frames 4 -r 1920x1080 --jpeg 90 --no-banner  --rotate $ROTATION --save $TEMP_IMG
         ;;
     hd3000)
-        fswebcam -S 150 --frames 4 -r 1280x720 --jpeg 90 --no-banner --rotate $ROTATION --save $WD/img.jpg
+        fswebcam -S 150 --frames 4 -r 1280x720 --jpeg 90 --no-banner --rotate $ROTATION --save $TEMP_IMG
         ;
     simple)
-        fswebcam -S 200 -r 640x480 --no-banner --jpeg 60 --no-banner --save $ROTATION $WD/img.jpg
+        fswebcam -S 200 -r 640x480 --no-banner --jpeg 60 --no-banner --save $ROTATION $TEMP_IMG
         ;;
     *)
         echo "Please set CAM_MODEL env var."
@@ -43,6 +46,11 @@ case $CAM_MODEL in
         ;;
 esac
 
+if ! [ -e "$TEMP_IMG" ]
+   echo "Image not taken possibly because of camera problems."
+   exit 1
+fi
+   
 # Put taken photo into timestamped folder with timestamp filename
 dirname_timestamp=$(date +"%Y%m%d")
 dirname=$WD/photos/$dirname_timestamp
@@ -53,6 +61,6 @@ filename=$filename_timestamp.jpg
 mkdir -p $dirname
 
 # Move file to archive folder
-mv $WD/img.jpg $dirname/$filename
+mv $TEMP_IMG $dirname/$filename
 
 exit 0
