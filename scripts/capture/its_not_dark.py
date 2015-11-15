@@ -12,11 +12,13 @@ o.long = '26'
 s = ephem.Sun()
 s.compute()
 
+treshold = timedelta(hours=2)
+
 last_setting = ephem.localtime(o.previous_setting(s))
-last_dark = last_setting + timedelta(hours=1)
+last_dark = last_setting + treshold
 
 last_rising = ephem.localtime(o.previous_rising(s))
-last_light = last_rising - timedelta(hours=1)
+last_light = last_rising - treshold
 
 if last_light < last_dark:
     print("It's dark!")
