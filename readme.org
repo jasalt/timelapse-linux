@@ -4,17 +4,21 @@
 
 ** Installation notes
 (work in progress)
-*** First setup SSH keypair for passwordless login
 
-1) Laptop > pi and kitchen
-2) kitchen > pi
+*** Setup SSH keypair for passwordless login.
+   1) Laptop > pi and kitchen
+   2) kitchen > pi
 
 *** Run Ansible playbook
+Setup passwordless sudo usage or use option =--ask-sudo-pass= in =ansible-playbook= command.
+
 - Setup everything =ansible-playbook -i ./hosts site.yml=
 - Limit to specific machine =ansible-playbook -i ./hosts -l kitchen site.yml=
-- Limit to tasks with tag "custom" =ansible-playbook -i ./hosts -l raspberry --tags script site.yml=
+- Limit to tasks with tag "script" =ansible-playbook -i ./hosts -l raspberry --tags script site.yml=
+
 
 Custom script jobs are mostly under tag "script".
+
 ** Pipeline overview
 *** Capture on Raspberry pi
 **** CRON every 1 minute

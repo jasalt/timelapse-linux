@@ -34,17 +34,54 @@
 
 - hosts: kitchen
   user: jarkko
+  sudo_user: root
   gather_facts: True
   # vars_files:
   #   #- vars/defaults.yml
   #   #- vars/user.yml
   tasks:
+  - name: Setup general utilities
+    sudo: yes
+    apt: pkg={{ item }} state=installed
+    with_items:
+      - screen
+      - mg
+      - curl
+      - python-pip
+      - python-dev
+    tags: deps
   - name: Add ~/bin directory and add to path
     file: path=/home/jarkko/bin/ state=directory mode=0755
     environment:
       PATH: /home/jarkko/bin:{{ ansible_env.PATH }}
   - name: Copy ngrok binary to ~/bin
     copy: src=scripts/bin/ngrok dest=/home/jarkko/bin/ngrok mode=u+rwx
+
+  # Weather station setup
+  - name: Setup PyWWS pip dependencies
+    sudo: yes
+    pip: name={{ item }}
+    with_items:
+      - tzlocal
+      - python-daemon
+      - libusb1
+      - pywws
+    tags: pywws
+
+  - name: Set Weather Station usage udev rule for group weatherstation (REBOOT TO ACTIVATE!)
+    copy: src=scripts/weatherstation/39-weather-station.rules dest=/etc/udev/rules.d/ mode=u+rwx
+    sudo: true
+    tags: pywws
+  - name: Add group for weatherstation users
+    group: name=weatherstation state=present
+    sudo: true
+    tags: pywws
+  - name: Add current user to group
+    user: name=jarkko groups=weatherstation append=yes
+    sudo: true
+    tags: pywws
+
+  # Webcam image processing
   - name: Create workdir for webcam image processing
     file: path={{ ansible_env.HOME }}/timelapse/days state=directory mode=0755
   - name: Set CRON to fetch daily images from raspberry
