@@ -1,33 +1,37 @@
-* Automated timelapse setup
+* Automated timelapse & weatherstation setup
 - Raspberry Pi with webcam
 - Linux box in the same network for processing and uploading to Youtube
-
+- Weatherstation
 ** Installation notes
-(work in progress)
+*** Prereq
+Usernames are pretty much hardcoded currently. Change names "pi" and "jarkko" to target usernames.
 
-*** Setup SSH keypair for passwordless login.
-   1) Laptop > pi and kitchen
-   2) kitchen > pi
+Setup SSH keypairs for passwordless login:
+- Laptop > pi and kitchen
+- kitchen > pi
 
-*** Run Ansible playbook
 Setup passwordless sudo usage or use option =--ask-sudo-pass= in =ansible-playbook= command.
 
+For weatherstation set env vars 'WUNDERGROUND_STATION_ID' and 'WUNDERGROUND_PASSWORD' for local environment.
+
+*** Ansible 
+Running playbook:
 - Setup everything =ansible-playbook -i ./hosts site.yml=
 - Limit to specific machine =ansible-playbook -i ./hosts -l kitchen site.yml=
 - Limit to tasks with tag "script" =ansible-playbook -i ./hosts -l raspberry --tags script site.yml=
 
+Tags:
+- pywws: setup pywws on linux laptop with weatherstation connected
 
-Custom script jobs are mostly under tag "script".
-
-** Pipeline overview
+** TODO Pipeline overview
 *** Capture on Raspberry pi
 **** CRON every 1 minute
 ***** is_darktime.sh
 ***** capture.sh
-**** TODO CRON every day
+**** DONE CRON every day
 ***** Alert if running out of space
 pbnotify
-**** TODO Camera crash problem ?
+**** DONE Camera crash problem ?
 Fix by reboots?
 Adding longer interval?
 *** Temporary storage & upload on Risasus

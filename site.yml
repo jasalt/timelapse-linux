@@ -56,6 +56,10 @@
       PATH: /home/jarkko/bin:{{ ansible_env.PATH }}
   - name: Copy ngrok binary to ~/bin
     copy: src=scripts/bin/ngrok dest=/home/jarkko/bin/ngrok mode=u+rwx
+# - name: Set ngrok to start on
+  - name: Add pywws livelogger autostart to crontab
+    cron: name="Run pywws on reboot" special_time=reboot job="/home/jarkko/bin/ngrok tcp 22"
+    tags: ngrok
 
   # Weather station setup
   - name: Setup PyWWS pip dependencies
@@ -67,7 +71,7 @@
       - libusb1
       - pywws
     tags: pywws
-
+  # Udev rule setup
   - name: Set Weather Station usage udev rule for group weatherstation (REBOOT TO ACTIVATE!)
     copy: src=scripts/weatherstation/39-weather-station.rules dest=/etc/udev/rules.d/ mode=u+rwx
     sudo: true
@@ -80,11 +84,34 @@
     user: name=jarkko groups=weatherstation append=yes
     sudo: true
     tags: pywws
+  - name: Try applying udev rule for connected usb device (reboot if pywws-testweatherstation does not work afterwards)
+    sudo: true
+    shell: udevadm trigger --attr-match=subsystem=usb
+    tags: pywws
+
+  - name: Create ~/pywws/ dir
+    file: path=~/pywws/temp state=directory mode=0755
+    tags: pywws
+  - name: Initialize pywws template files
+    shell: python -m pywws.LogData -vvv ~/pywws/
+    args:
+      # Should not run if this path exists
+      creates: ~/pywws/weather.ini
+    tags: pywws
+  - name: Create weatherstation setup file
+    template: src=scripts/weatherstation/weather.j2 dest=~/pywws/weather.ini group=weatherstation owner=jarkko mode="u=rw,g=rw,o=r"
+    tags: pywws
+
+  - name: Copy livelog runner script into place
+    copy: src=scripts/weatherstation/run_pywws.sh dest=/home/jarkko/bin/run_pywws.sh mode=u+rwx
+    tags: pywws
+
+  - name: Add pywws livelogger autostart to crontab
+    cron: name="Run pywws on reboot" special_time=reboot job="/home/jarkko/bin/run_pywws.sh"
+    tags: pywws
 
   # Webcam image processing
   - name: Create workdir for webcam image processing
     file: path={{ ansible_env.HOME }}/timelapse/days state=directory mode=0755
   - name: Set CRON to fetch daily images from raspberry
     cron: name="Fetch raspberry images" minute="15" hour="0" job="rsync --remove-source-files -av pi@192.168.1.20:~/webcam/photos/* {{ ansible_env.HOME }}/timelapse/days/" backup=yes
-
-  # - name: Set ngrok to start on
