@@ -61,3 +61,6 @@ Different machines
 **** TODO Device storage percentages
 **** TODO Logfiles
 Point script outputs to logfiles.
+
+* Related projects
+https://github.com/dandelany/animate-earth
