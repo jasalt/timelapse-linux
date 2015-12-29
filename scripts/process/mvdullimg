@@ -51,7 +51,7 @@ for img in * ; do
                                -e '/standard deviation/ !d' \
                                -e 's/\ *[\: a-z]*//' -e 's/(.*//' |
                            awk '{print int($1+0.5)}')
-    if [ $img_deviation -lt 4 ]
+    if [ $img_deviation -lt $min_deviation ]
     then
         echo "`date +"%H:%M:%S"`: $img moving (deviates $img_deviation)" >&2
         mv $img $out_dir
