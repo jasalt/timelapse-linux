@@ -6,13 +6,16 @@ while getopts "o:hd:" opt; do
     case $opt in
         h)
             echo "Move dull images (eg. completely dark) out from current directory.
+
+Run script on the image sequence dir.
+Required flags -o and -d.
+  - o: set output directory
+  - d: set minimum standard deviation value for a good image (that's not moved)
+
 Example usage: 
   mvdullimg -o ../../dull/ -d 4
 Run parallel in parent directory with xargs: 
   ls | xargs -I {} -P 8 -n 1 -t  bash -c 'cd {} && mvdullimg -o ../../dull -d 4'
-
-Required flags -o and -d, run on the image sequence dir.
-Read script for more documentation.
 " >&2
             exit 1
             ;;
