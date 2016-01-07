@@ -20,5 +20,6 @@
 # Remove empty photo dirs daily
 0 1 * * * find /home/pi/webcam/photos/ -depth -type d -empty -delete
 
-# Take a picture every minute
-* * * * * export CAM_MODEL=hd3000;/home/pi/webcam/snap-archive.sh > /dev/null
+# Take a picture twice every minute
+* * * * * export CAM_MODEL=c920e;/home/pi/webcam/snap-archive.sh > /dev/null
+* * * * * sleep 30 && export CAM_MODEL=c920e;/home/pi/webcam/snap-archive.sh > /dev/null
