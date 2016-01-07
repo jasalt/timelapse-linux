@@ -10,11 +10,8 @@
       - curl
       - python-pip
       - python-dev
-  - name: Install ephem pip dependency.
-    sudo: yes
-    pip: name=ephem
-  - name: Copy its_not_dark.py script into place
-    copy: src=scripts/capture/its_not_dark.py dest=/home/pi/webcam/its_not_dark.py mode=a+rwx
+  - name: Copy img_is_dark script into place
+    copy: src=scripts/capture/img_is_dark dest=/home/pi/webcam/img_is_dark mode=a+rwx
     tags:
       - script
   - name: Copy capture script into place

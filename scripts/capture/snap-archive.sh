@@ -8,10 +8,6 @@
 # Notes
 # In CRON, only HOME, LOGNAME and SHELL env variables are set.
 
-`dirname $0`/its_not_dark.py
-if [ $? -eq 1 ]; then echo "Not taking picture when it's dark." && exit 1; fi
-
-
 
 # Reset camera focus to infinite
 if ! [ -z "$CAM_RESET_FOCUS" ]; then
@@ -32,12 +28,15 @@ TEMP_IMG=$WD/img.jpg
 # Take photo with webcamera
 case $CAM_MODEL in
     c920e)
+        MIN_DEV=4
         fswebcam -S 150 --frames 4 -r 1920x1080 --jpeg 90 --no-banner  --rotate $ROTATION --save $TEMP_IMG
         ;;
     hd3000)
+        MIN_DEV=7
         fswebcam -S 150 --frames 4 -r 1280x720 --jpeg 90 --no-banner --rotate $ROTATION --save $TEMP_IMG
         ;;
     simple)
+        MIN_DEV=7
         fswebcam -S 200 -r 640x480 --no-banner --jpeg 60 --no-banner --save $ROTATION $TEMP_IMG
         ;;
     *)
@@ -50,7 +49,15 @@ if ! [ -e "$TEMP_IMG" ]; then
    echo "Image not taken possibly because of camera problems."
    exit 1
 fi
-   
+
+`dirname $0`/img_is_dark -d $MIN_DEV $TEMP_IMG
+if [ $? -eq 1 ];
+then
+    echo "Image too dark, deleting."
+    rm $TEMP_IMG
+    exit 1;
+fi
+
 # Put taken photo into timestamped folder with timestamp filename
 dirname_timestamp=$(date +"%Y%m%d")
 dirname=$WD/photos/$dirname_timestamp

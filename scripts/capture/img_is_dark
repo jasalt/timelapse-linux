@@ -1,0 +1,52 @@
+#!/bin/bash
+# See mvdullimg script for batch processing
+
+while getopts "hd:" opt; do
+    case $opt in
+        h)
+            echo \
+"Check if image is completely dark (or some other plain color).
+Exits with code 1 for dark images, exit code 0 for normal images.
+
+Run script on the image sequence dir.
+Required flags -d defines minimum standard deviation value for non-dark image.
+  
+Example usage: 
+  img_is_dark -d 4 <imgfile>'" >&2
+            exit 2
+            ;;
+        d)
+            min_deviation=$OPTARG
+            ;;
+        \?)
+            echo "Invalid option: -$OPTARG" >&2
+            ;;
+        :)
+            echo "Option -$OPTARG requires an argument." >&2
+            exit 2
+            ;;
+    esac
+done
+
+img=${@:$OPTIND:1}
+
+if [ ! -f $img ]; then
+    echo "File not found!" >&2
+    exit 2
+fi
+
+img_deviation=$(identify -verbose $img |
+                       sed -e '/Image statistics:/,/standard deviation:/ !d' \
+                           -e '/standard deviation/ !d' \
+                           -e 's/\ *[\: a-z]*//' -e 's/(.*//' |
+                       awk '{print int($1+0.5)}')
+if [ $img_deviation -lt $min_deviation ]
+then
+    echo "$img is dark (img $img_deviation < minimum $min_deviation)" >&2
+    exit 1
+else
+    echo "$img is not dark (img $img_deviation >= minimum $min_deviation)" >&2
+    exit 0
+fi
+
+
