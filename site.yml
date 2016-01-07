@@ -2,7 +2,7 @@
   user: pi
   gather_facts: False
   tasks:
-  - name: Install fswebcam and curl
+  - name: Install dependencies
     sudo: yes
     apt: pkg={{ item }} state=installed
     with_items:
@@ -10,6 +10,8 @@
       - curl
       - python-pip
       - python-dev
+      - imagemagick
+      - libimage-exiftool-perl
   - name: Copy img_is_dark script into place
     copy: src=scripts/capture/img_is_dark dest=/home/pi/webcam/img_is_dark mode=a+rwx
     tags:

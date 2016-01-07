@@ -28,17 +28,17 @@ TEMP_IMG=$WD/img.jpg
 # Take photo with webcamera
 case $CAM_MODEL in
     c920e)
-        MIN_DEV=4
+        MIN_DEV=700
         CAM_NAME="Logitech c930e"
         fswebcam -S 150 --frames 4 -r 1920x1080 --jpeg 90 --no-banner  --rotate $ROTATION --save $TEMP_IMG
         ;;
     hd3000)
-        MIN_DEV=7
+        MIN_DEV=850
         CAM_NAME="Microsoft Lifecam HD-3000"
         fswebcam -S 150 --frames 4 -r 1280x720 --jpeg 90 --no-banner --rotate $ROTATION --save $TEMP_IMG
         ;;
     simple)
-        MIN_DEV=7
+        MIN_DEV=850
         CAM_NAME="Undefined webcamera"
         fswebcam -S 200 -r 640x480 --no-banner --jpeg 60 --no-banner --save $ROTATION $TEMP_IMG
         ;;
