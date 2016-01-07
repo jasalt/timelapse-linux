@@ -23,3 +23,7 @@
 # Take a picture twice every minute
 * * * * * export CAM_MODEL=c920e;/home/pi/webcam/snap-archive.sh > /dev/null
 * * * * * sleep 30 && export CAM_MODEL=c920e;/home/pi/webcam/snap-archive.sh > /dev/null
+
+# Disable autofocus, focus infinity
+@reboot v4l2-ctl -d 0 -c focus_auto=0
+@reboot v4l2-ctl -d 0 -c focus_absolute=0
