@@ -29,14 +29,17 @@ TEMP_IMG=$WD/img.jpg
 case $CAM_MODEL in
     c920e)
         MIN_DEV=4
+        CAM_NAME="Logitech c930e"
         fswebcam -S 150 --frames 4 -r 1920x1080 --jpeg 90 --no-banner  --rotate $ROTATION --save $TEMP_IMG
         ;;
     hd3000)
         MIN_DEV=7
+        CAM_NAME="Microsoft Lifecam HD-3000"
         fswebcam -S 150 --frames 4 -r 1280x720 --jpeg 90 --no-banner --rotate $ROTATION --save $TEMP_IMG
         ;;
     simple)
         MIN_DEV=7
+        CAM_NAME="Undefined webcamera"
         fswebcam -S 200 -r 640x480 --no-banner --jpeg 60 --no-banner --save $ROTATION $TEMP_IMG
         ;;
     *)
@@ -50,15 +53,21 @@ if ! [ -e "$TEMP_IMG" ]; then
    exit 1
 fi
 
+
+# Scrap dark images
 `dirname $0`/img_is_dark -d $MIN_DEV $TEMP_IMG
 if [ $? -eq 1 ];
 then
     echo "Image too dark, deleting."
     rm $TEMP_IMG
-    exit 1;
+    exit 1
 fi
 
-# Put taken photo into timestamped folder with timestamp filename
+# Add GPS EXIF metadata
+exiftool $TEMP_IMG -overwrite_original -GPSLatitudeRef=N -GPSLatitude=61.892220 -GPSLongitudeRef=E -GPSLongitude=25.655319 -GPSImgDirectionRef=T -GPSImgDirection=290 -Model="$CAM_NAME"
+
+
+# Store taken photo into folder with datestamp with full timestamp filename
 dirname_timestamp=$(date +"%Y%m%d")
 dirname=$WD/photos/$dirname_timestamp
 
