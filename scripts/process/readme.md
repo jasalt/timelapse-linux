@@ -1,24 +1,21 @@
-Images are arranged in daily directories under sequences folder.
-Outputs videos are stored
-
-in seImages are held in single  and named in forma
+Images are arranged in daily directories under sequences folder in following dir structure and named with timestamp.
 
     sequences/yyyymmdd/yyyymmdd-hhmmss.jpg
 
 # Cleanup content
 See also TODO section
 ## Cleanup dark images
-Imagemagick `identify` command outputs information about image content. Currently the average standard deviation value is used for recognizing dark (or white) images.
+Imagemagick `identify` command outputs information about image content. Currently the standard deviation value is used for recognizing dark (or white) images.
 
-    identify -verbose 20150711-140001.jpg | sed -e '/Image statistics:/,/standard deviation:/ !d' -e '/standard deviation/ !d' -e 's/\ *[\: a-z]*//' -e 's/(.*//'
+    identify -format "%[standard-deviation]" 20150711-140001.jpg
 
-When looking for black images, for better cameras a cutoff value of 4 might be ideal. For lower end cameras with more noise, cutoff value of 6-15 should work.
+When looking for black images, for better cameras a cutoff value of 700 might be ideal. For lower end cameras with more noise, cutoff value of 800-900 could work.
 
 A simple command line tool `mvdullimg` helps batch processing out dark images by running script in parallel with `xargs`:
 
-    ls | xargs -I {} -P 8 -n 1 -t  bash -c 'cd {} && mvdullimg -o ../../dull -d 4'
+    ls | xargs -I {} -P 8 -n 1 -t  bash -c 'cd {} && mvdullimg -o ../../dull -d 700'
 
-Try the tool with high value (eg. 20) and monitor script output to see what kind of values would work for your content.
+Try the tool with high value (eg. 1000000) and monitor script output to see what kind of values would work for your content.
 
 ## Remove bottom border
 Some images have had a title outputted by `fswebcam` on the bottom by mistake. It's easily removed with `imagemagick`. Just make sure that pixel values can be divided by 2, as ffmpeg libx264 may give errors otherwise.
@@ -32,7 +29,12 @@ As a batch operation for range of directories run:
         xargs -I {} -P 8 -t bash -c 'cd {} && for img in *.jpg; do convert $img -gravity South -chop  0x22 $img; done'
 
 # Add geo metadata
-    exiftool ./*.jpg -overwrite_original -GPSLatitudeRef=N -GPSLatitude=61.892220 -GPSLongitudeRef=E -GPSLongitude=25.655319 -GPSImgDirectionRef=T -GPSImgDirection=290 -Model="Logitech c930e"
+Default filming location
+
+exiftool ./*.jpg -overwrite_original -GPSLatitudeRef=N -GPSLatitude=61.892220 -GPSLongitudeRef=E -GPSLongitude=25.655319 -GPSImgDirectionRef=T -GPSImgDirection=290 -Model="Microsoft Lifecam HD-3000"
+
+-Model="Logitech c930e"
+-Model="Microsoft Lifecam HD-3000"
 
 # Compose video
 Create compressed video from image sequence.

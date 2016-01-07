@@ -1,6 +1,6 @@
 #!/bin/bash
 # Move out dark images from directory
-# Image is considered to be dark if it's rounded standard deviation value is less than eg. 4
+# Image is considered to be dark if it's rounded standard deviation value is less than eg. 700
 # Jarkko Saltiola 2015, MIT Licensed
 
 while getopts "o:hd:" opt; do
@@ -13,10 +13,10 @@ Required flags -o and -d.
   - o: set output directory
   - d: set minimum standard deviation value for a good image (that's not moved)
 
-Example usage: 
-  mvdullimg -o ../../dull/ -d 4
-Run parallel in parent directory with xargs: 
-  ls | xargs -I {} -P 8 -n 1 -t  bash -c 'cd {} && mvdullimg -o ../../dull -d 4'
+Example usage:
+  mvdullimg -o ../../dull/ -d 700
+Run parallel in parent directory with xargs:
+  ls | xargs -I {} -P 8 -n 1 -t  bash -c 'cd {} && mvdullimg -o ../../dull -d 700'
 " >&2
             exit 1
             ;;
@@ -47,10 +47,7 @@ mkdir -p $out_dir
 echo "Moving dull images from `pwd`." >&2
 
 for img in * ; do
-    img_deviation=$(identify -verbose $img |
-                           sed -e '/Image statistics:/,/standard deviation:/ !d' \
-                               -e '/standard deviation/ !d' \
-                               -e 's/\ *[\: a-z]*//' -e 's/(.*//' |
+    img_deviation=$(identify -format "%[standard-deviation]" $img |
                            awk '{print int($1+0.5)}')
     if [ $img_deviation -lt $min_deviation ]
     then
@@ -58,5 +55,5 @@ for img in * ; do
         mv $img $out_dir
     else echo "`date +"%H:%M:%S"`: $img skipping (deviates $img_deviation)" >&2
     fi
-   
+
 done
