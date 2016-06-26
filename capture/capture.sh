@@ -11,11 +11,11 @@
 echo "Running capture.sh at `date`"
 
 # Reset camera focus to infinite
-if ! [ -z "$CAM_RESET_FOCUS" ]; then
-    v4l2-ctl -d 0 -c focus_auto=0
-    v4l2-ctl -d 0 -c focus_absolute=0
-    sleep 2
-fi
+
+v4l2-ctl -d 0 -c focus_auto=0
+v4l2-ctl -d 0 -c focus_absolute=0
+echo "Set focus to infinite."
+sleep 1
 
 # Set rotation by env var, default to 0.
 ROTATION=${CAM_ROTATION:-0}
@@ -34,7 +34,7 @@ TEMP_IMG=$WD/$filename
 # Minimum deviation, image is too dark when going under this value.
 MIN_DEV=700 # Logitech c930e
 
-fswebcam -S 150 --frames 4 -r 1920x1080 --jpeg 90 --no-banner  --rotate $ROTATION --save $TEMP_IMG
+fswebcam -S 150 --frames 4 -r 1920x1080 --jpeg 85 --no-banner  --rotate $ROTATION --save $TEMP_IMG
 
 ## Other cameras
 # MIN_DEV=850 # Microsoft Lifecam HD-3000

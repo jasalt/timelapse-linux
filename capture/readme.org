@@ -5,7 +5,7 @@ Machine used for capturing webcam frames, filtering out dark images and sending 
 
 ** Installation
 *** Install depending packages and clone this git repo
-=sudo apt-get install git curl rsync fswebcam imagemagick libimage-exiftool-perl=
+=sudo apt-get install git curl rsync mg tmux fswebcam imagemagick libimage-exiftool-perl=
 =git clone git@github.com:jasalt/timelapse-linux.git=
 
 *** Add cronjobs for capture script (see capture.cron as example) using =crontab -e= command:
