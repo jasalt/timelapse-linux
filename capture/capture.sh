@@ -1,12 +1,7 @@
 #!/bin/bash -ex
 # Script for taking webcam pictures and archiving them named by date.
+# Add exif geo metadata to frames.
 # Discards dark images.
-
-# Controllable by some environment variables:
-# CAM_RESET_FOCUS set camera to infinite focus before taking picture
-# CAM_ROTATION=0-360 rotate picture by degrees, default to 0
-# Notes
-# In CRON, only HOME, LOGNAME and SHELL env variables are set.
 
 echo "Running capture.sh at `date`"
 
@@ -34,7 +29,8 @@ TEMP_IMG=$WD/$filename
 # Minimum deviation, image is too dark when going under this value.
 MIN_DEV=700 # Logitech c930e
 
-fswebcam -S 150 --frames 4 -r 1920x1080 --jpeg 85 --no-banner  --rotate $ROTATION --save $TEMP_IMG
+fswebcam -S 150 --frames 4 -r 1920x1080 --jpeg 85 --no-banner   --save $TEMP_IMG
+# --rotate 180
 
 ## Other cameras
 # MIN_DEV=850 # Microsoft Lifecam HD-3000
@@ -55,7 +51,7 @@ then
 fi
 
 # Add GPS EXIF metadata
-exiftool $TEMP_IMG -overwrite_original -GPSLatitudeRef=N -GPSLatitude=61.892220 -GPSLongitudeRef=E -GPSLongitude=25.655319 -GPSImgDirectionRef=T -GPSImgDirection=290 -Model="$CAM_NAME"
+exiftool $TEMP_IMG -overwrite_original -GPSLatitudeRef=N -GPSLatitude=61.892220 -GPSLongitudeRef=E -GPSLongitude=25.655319 -GPSImgDirectionRef=T -GPSImgDirection=290 -Model="Logitech C930e"
 
 # Store taken photo into folder with datestamp with full timestamp filename
 dirname_timestamp=$(date +"%Y%m%d")
