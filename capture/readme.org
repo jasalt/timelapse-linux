@@ -4,22 +4,17 @@ Using Raspberry Pi Model B with Raspbian Jessie Lite
 Machine used for capturing webcam frames, filtering out dark images and sending them to another machine over ssh with rsync.
 
 ** Installation
+*** Install depending packages and clone this git repo
 =sudo apt-get install git curl rsync fswebcam imagemagick libimage-exiftool-perl=
-
- python-pip python-dev 
-
 =git clone git@github.com:jasalt/timelapse-linux.git=
 
-Add cronjobs for capture script (see capture.cron as example):
+*** Add cronjobs for capture script (see capture.cron as example) using =crontab -e= command:
 
-Remove empty leftover photo dirs daily:
-
+# Remove empty leftover photo dirs daily:
 =0 1 * * * find /home/pi/webcam/photos/ -depth -type d -empty -delete=
-
-Take a picture twice every minute:
-
-=* * * * * export /home/pi/webcam/snap-archive.sh >> /home/pi/webcam.log 2>&1=
-=* * * * * sleep 30 ;/home/pi/webcam/snap-archive.sh >> /home/pi/webcam.log 2>&1=
+# Take a picture twice every minute:
+=* * * * * export /home/pi/timelapse-linux/capture/capture.sh >> /home/pi/webcam.log 2>&1=
+=* * * * * sleep 30 ;/home/pi/timelapse-linux/capture/capture.sh >> /home/pi/webcam.log 2>&1=
 
 # TODO Disable autofocus, focus infinity
 @reboot v4l2-ctl -d 0 -c focus_auto=0
