@@ -1,0 +1,33 @@
+#!/bin/bash -eu
+
+# Upload weatherlapse video to Weatherlapse Youtube channel
+# Jarkko Saltiola 2015, MIT Licensed
+
+command -v youtube-upload >/dev/null 2>&1 ||
+    { echo >&2 "The youtube-dl tool is not installed..";
+      echo >&2 "Installing missing dependencies via pip";
+      sudo pip install google-api-python-client progressbar;
+
+      echo >&2 "Downloading and installing youtube-upload..";
+      wget https://github.com/tokland/youtube-upload/archive/master.zip
+      unzip master.zip
+      cd youtube-upload-master
+      sudo python setup.py install
+      cd ..
+      sudo rm -rf youtube-upload-master
+      rm -f master.zip
+    }
+
+description="Automatically uploaded timelapse video.
+See more at http://weatherlapse.dy.fi/
+
+Code:
+https://github.com/jasalt/weatherlapse
+https://github.com/jasalt/timelapse-intra/"
+
+for vid in $@
+do
+    youtube-upload --title="`echo $vid | sed -e 's_./__' -e 's_\..*__'`" --tags="nature, timelapse, finland, animals, photography, weather, sky, clouds, linux" --playlist="unprocessed" --client-secrets=$YOUTUBE_CREDENTIALS  --description='$description' $vid
+done
+
+# TODO --location=latitude=61.892220,longitude=25.655319 \
